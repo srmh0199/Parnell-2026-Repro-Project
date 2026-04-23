@@ -1,0 +1,106 @@
+
+---
+title: "Parnell Reproductive Report"
+subtitle: "Loop through farm names tbd"
+author: "<img src='images/parnell.jpeg' width='150' /> <br> Sarah Hills"
+date: "`r Sys.Date()`"
+format:
+  html:
+    page-layout: full
+    theme: flatly
+    df_print: paged
+    toc: true
+    toc-location: left
+    number-sections: false
+    code-fold: true
+execute:
+  message: false
+  warning: false
+  echo: false
+embed-resources: true
+params:
+  event:
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+  broom,
+  tidyverse,
+  dtplyr,
+  gt,
+  arrow,
+  rmarkdown,
+  lubridate,
+  quarto, 
+  arrow,
+  survival,
+  survminer,
+  ggsurvfit,
+  flextable,
+  gtsummary,
+  marginaleffects,
+  scales,
+  zoo,
+  here
+  )
+
+events_formatted <- read_parquet(here::here('data/intermediate_files/events_formatted.parquet'))
+
+animals <- read_parquet(here::here('data/intermediate_files/animals.parquet'))
+
+animal_lactations<-read_parquet(here::here('data/intermediate_files/animal_lactations.parquet'))
+
+# load GC's functions
+source(here::here("functions/fxn_load_os_fxns.R"))
+fxn_load_os_fxns()
+
+source('functions/fxn_denos_sarah.R')
+herd_deno <- fxn_denos_sarah(
+  lact_data = animal_lactations, 
+  events_df = events_formatted, 
+  animal_data = animals)
+
+source('functions/fxn_denominators_monthly.R')
+monthly_deno_data <- fxn_get_monthly_denominators(animal_lactations, animals)
+
+# Load Parnell CR fucntions from Github
+cr_url <- "https://raw.githubusercontent.com/ParnellPharma/ParnellFunctionsPublic/main/parnell_calculate_CR_master.R"
+source(cr_url)
+
+# create variables for inline code
+farm_name <- unique(events_formatted$location_event)
+
+date_max_pull <- max(events_formatted$date_event, na.rm = TRUE)
+date_min_pull <- date_max_pull - years(2)
+
+
+farm_name <- basename(farm_name)
+
+farm_name <- tools::file_path_sans_ext(farm_name)
+
+farm_name <- str_replace_all(farm_name, "[_|-]", " ") |> str_to_title()
+
+```
+
+```{r}
+#| label: KPIs
+#| echo: false
+
+# CR
+
+
+#PR
+
+
+# Abortion Rate
+
+
+
+
+```
+
+
