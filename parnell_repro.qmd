@@ -110,10 +110,9 @@ periods_df <- tibble(
   period_start = date_max_pull - (0:23 * 21) - 20
 )
 
-# Ensure date_archive is set to date_max_pull if NA
 herd_intervals <- animal_lactations |>
   filter(lact_number > 0) |> 
-  select(id_animal_lact, date_fresh, date_archive) |>
+  select(id_animal_lact, date_fresh, date_archive, date_dry) |>
   mutate(date_archive = if_else(is.na(date_archive), date_max_pull, date_archive))
 
 eligible_cows_by_period <- periods_df |>
@@ -121,13 +120,10 @@ eligible_cows_by_period <- periods_df |>
   filter(
     date_fresh <= period_end,
     date_archive >= period_start,
-    as.numeric(period_start - date_fresh) > vwp
+    as.numeric(period_start - date_fresh) > vwp,
+    date_dry > period_end
   ) |>
-  # This grouping is the key:
-  # It isolates the de-duplication to JUST this period for JUST this cow
   group_by(period_id, id_animal_lact) |> 
-  # We pick the row with the most recent fresh date, 
-  # because that is the most relevant lactation for that period.
   slice_max(date_fresh, with_ties = FALSE) |>
   ungroup()
 
@@ -141,7 +137,6 @@ eligible_summary |>
   tab_header(title = "Eligible Cows per 21-Day Period")
 
 #IR - Out of the cows that were eligible to be bred, how many were bred?
-
 breeding_events <- events_formatted |>
   filter(event == "BRED") |> 
   select(id_animal_lact, date_event, event)
@@ -152,14 +147,12 @@ bred_flags <- breeding_events |>
     date_event >= period_start,
     date_event <= period_end
   ) |>
-  # Ensure we only have one row per cow per period
   distinct(id_animal_lact, period_id) |>
   mutate(is_bred = TRUE)
 
 bred_report <- eligible_cows_by_period |>
   left_join(bred_flags, by = c("id_animal_lact", "period_id")) |>
   mutate(
-    # If the join found a match, is_bred is TRUE; otherwise it's FALSE
     is_bred = replace_na(is_bred, FALSE)
   )
 
