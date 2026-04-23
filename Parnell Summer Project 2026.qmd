@@ -1,0 +1,38 @@
+---
+title: "Parnell Summer Project 2026"
+format: html
+---
+
+## What question would you like to answer?
+
+What is the conception rate on different reproductive protocols?
+
+-   For example within a herd cherry picking off of a double ovsynch does heat detection or TAI have a better performance.
+
+-   Across multiple herds what is the mean, max, and min conception rate for certain protocols?
+
+## Why is that question relevant to producers or the dairy industry?
+
+Understanding what protocol within a herd is most successful will help pinpoint where there may be bottlenecks and where certain changes may be appropriate.
+
+## What data would you need for this project?
+
+All reproductive events with animal IDs, dates, lact group. As well as total animals within a herd at a given time (denominators)
+
+Step 0 - W9, hours per week?, start week? zoom weekly on thur noon
+
+Step 1 - What Herd Management systems are running on YOUR farms: DC305 and amilcor
+
+Step 2 - Logistics of connecting to Parnell data
+
+Step 3 - Wrangle!
+
+Step 4 - Reports Quarto/Shiny
+
+## How do you plan to let your target audience know your report exists and educate them about how to use it? (i.e. would you present it at a conference? Write an article about it?)
+
+-   At a more local level I would advertise with my producers.
+
+    -   Details??
+
+-   I would be open to presenting at a conference or publishing.
